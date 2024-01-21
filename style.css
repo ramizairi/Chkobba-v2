@@ -1,4 +1,6 @@
-
+body {
+    background-image: url('table_background.jpg');
+}
 /*Player*/
 .player {
     position: absolute; 
@@ -30,18 +32,20 @@
 /*Table*/
 .table {
     position: absolute;
-    top: 35%;
+    top: 30%;
     left: 35%;
-    width: 600px;
+    width: 500px;
     display: flex; /* Use flexbox to organize children */
     flex-wrap: wrap; /* Wrap items to the next line */
     justify-content: center; /* Center items horizontally */
     align-items: center; /* Center items vertically */
+    
 }
 
 .tablecards {
+    cursor: pointer;
     width: 110px;
-    margin: 5px; /* Add some space between cards */
-    margin-left: 20px;
+    margin: 5px;
+    margin-left: 20px; /* Add some space between cards */
     flex: 0 0 50%; /* Set the basis to 50% to have 2 columns */
 }

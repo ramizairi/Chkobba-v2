@@ -47,6 +47,8 @@ var mekle4 = document.querySelector("#mekle3");
 
 var botCardValues = [null, null, null];
 var BotCards, PlayerCards, TableCards;
+var botEatedCards = [];
+var playerEatedCards = [];
 
 
 
@@ -64,31 +66,30 @@ function init() {
     }
 
 
-//Bot Cards
+    //Bot Cards
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     botCardValues[0] = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
     console.log("botCardValues[0]", botCardValues[0])
     img1.src = "back.svg";
-    console.log("img1.src ",img1.src)
 
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     botCardValues[1] = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
+    console.log("botCardValues[2]", botCardValues[2])
     img2.src = "back.svg";
 
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     botCardValues[2] = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
+    console.log("botCardValues[3]", botCardValues[3])
     img3.src = "back.svg";
 
-
-//Player Cards
+    //Player Cards
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     img5.src = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
     AllCard--;
-    
 
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
@@ -105,50 +106,31 @@ function init() {
 
 // Table Cards
 
-function mekle() {
-
-
+function Table() {
 
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     mekle1.src = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
     AllCard--;
-    //choseCard(randomNumberCard).splice(randomNumber,1);
-
 
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     mekle2.src = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
     AllCard--;
 
-    //choseCard(randomNumberCard).splice(randomNumber,1);
-
-
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     mekle3.src = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
     AllCard--;
 
-    //choseCard(randomNumberCard).splice(randomNumber,1);
-
-
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     mekle4.src = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
     AllCard--;
-    // choseCard(randomNumberCard).splice(randomNumber,1);
-
 }
-
-
+//Start The game
 init();
-
-mekle();
-
-
-
-
-
+Table();
 // gives new cards to players
 
 function restart() {
@@ -185,22 +167,20 @@ console.log("clubs -> " + clubs);
 
 // add the random card to players and mekle arrays
 
-BotCards = [img1.src[img1.src.length - 13], img2.src[img2.src.length - 13], img3.src[img3.src.length - 13]];
-console.log("player 1 -> " + BotCards);
+BotCards = [botCardValues[0][botCardValues[0].length - 13], botCardValues[1][botCardValues[1].length - 13], botCardValues[2][botCardValues[2].length - 13]];
+console.log("Bot Cards -> " + BotCards);
 
 PlayerCards = [img5.src[img5.src.length - 13], img6.src[img6.src.length - 13], img7.src[img7.src.length - 13]];
-console.log("player 2 -> " + PlayerCards);
+console.log("Player Cards -> " + PlayerCards);
 
-mekle = [mekle1.src[mekle1.src.length - 13], mekle2.src[mekle2.src.length - 13], mekle3.src[mekle3.src.length - 13], mekle4.src[mekle4.src.length - 13]];
-console.log("makle -> " + mekle);
+Table = [mekle1.src[mekle1.src.length - 13], mekle2.src[mekle2.src.length - 13], mekle3.src[mekle3.src.length - 13], mekle4.src[mekle4.src.length - 13]];
+console.log("Table Cards -> " + Table);
 
 
 function search(playerCards) {
 
     for (var i = 0; i < playerCards.length; i++) {
         switch (playerCards[i]) {
-            case '0': playerCards[i] = '10';
-                break;
             case 'a': playerCards[i] = '9';
                 break;
             case 'u': playerCards[i] = '8';
@@ -213,11 +193,11 @@ function search(playerCards) {
 
 search(BotCards);
 search(PlayerCards);
-search(mekle);
+search(Table);
 
 console.log(BotCards);
 console.log(PlayerCards);
-console.log(mekle);
+console.log(Table);
 
 var BotTurn = true;
 var PlayerTurn = false;
@@ -225,21 +205,35 @@ var PlayerTurn = false;
 var mekleDisplay = document.querySelector("#mekle");
 var bool;
 
-
+// Remove cards if one of the players eat "UI"
 function display(i, j, playerCards, cardId) {
     $("#" + cardId).fadeOut("slow");
     playerCards[i] = "Removed";
-    mekle[j] = "Removed";
+    Table[j] = "Removed";
     $("#mekle" + j).fadeOut("slow");
     bool = false;
-    search(mekle);
+    search(Table);
 }
 
 
+// Put the card on the table : For the bot
+function addBotNode(i, j, id, playerCards, cardId, direction) {
+    Table.push(playerCards[i]);
+    playerCards[i] = "Removed";
+    document.querySelector("#" + cardId).style.display = "none";
+    var node = document.createElement("img");
+    node.setAttribute("src", botCardValues[i]);
+    node.setAttribute("id", "mekle" + j);
+    node.classList.add("tablecards");
+    node.classList.add("w3-animate-" + direction);
+    mekleDisplay.appendChild(node);
+    search(Table);
+}
+
+// Put the card on the table : For the Player
 function addNode(i, j, id, playerCards, cardId, direction) {
     var image = document.getElementById(id);
-    console.log("Ceci est l'",image)
-    mekle.push(playerCards[i]);
+    Table.push(playerCards[i]);
     playerCards[i] = "Removed";
     document.querySelector("#" + cardId).style.display = "none";
     var node = document.createElement("img");
@@ -248,58 +242,60 @@ function addNode(i, j, id, playerCards, cardId, direction) {
     node.classList.add("tablecards");
     node.classList.add("w3-animate-" + direction);
     mekleDisplay.appendChild(node);
-    search(mekle);
+    search(Table);
 }
 
-function addBotNode(i, j, id, playerCards, cardId, direction) {
-    var image = document.getElementById(id);
-    mekle.push(playerCards[i]);
-    playerCards[i] = "Removed";
-    document.querySelector("#" + cardId).style.display = "none";
-    var node = document.createElement("img");
-    node.setAttribute("src", image.src);
-    node.setAttribute("id", "mekle" + j);
-    node.classList.add("tablecards");
-    node.classList.add("w3-animate-" + direction);
-    mekleDisplay.appendChild(node);
-    search(mekle);
-}
-
-function BotAttack(i, id) {
-    if (BotTurn) {
-        bool = true;
-        var cardId = "card" + (i + 1);
-        console.log("Card id is ", cardId)
-        for (var j = 0; j < mekle.length; j++) {
-            if (BotCards[i] == mekle[j]) {
-                var cardId = "card" + (i + 1);
-                console.log("Is eating...")
-                display(i, j, BotCards, cardId);
+function BotAttack(botcard_i, botcard_id) {
+    bool = true;
+    var cardId = "card" + (botcard_i + 1);
+    for (var j = 0; j < Table.length; j++) {
+        if (BotCards[botcard_i] == Table[j]) {
+            var x = Number(PlayerCards[i]);
+            var y = Number(Table[j]);
+            botEatedCards.push(x, y);
+            var cardId = "card" + (botcard_i + 1);
+            display(botcard_i, j, BotCards, cardId);
+            break;
+        }
+        for (var k = j + 1; k < Table.length; k++) {
+            var x1 = Number(PlayerCards[i]);
+            var y1 = Number(Table[j]);
+            var z1 = Number(Table[k])
+            if (Number(Table[j]) + Number(Table[k]) == BotCards[botcard_i]) {
+                botEatedCards.push(x1, y1, z1);
+                $("#card" + (botcard_i + 1)).fadeOut("slow");
+                BotCards[botcard_i] = "Removed";
+                Table[j] = "Removed";
+                $("#mekle" + j).fadeOut("slow");
+                Table[k] = "Removed";
+                $("#mekle" + k).fadeOut("slow");
+                bool = false;
                 break;
             }
-            for (var k = j + 1; k < mekle.length; k++) {
-                
-                console.log("Place card on table")
-                if (Number(mekle[j]) + Number(mekle[k]) == BotCards[i]) {
-                    $("#card" + (i + 1)).fadeOut("slow");
-                    BotCards[i] = "Removed";
-                    mekle[j] = "Removed";
-                    $("#mekle" + j).fadeOut("slow");
-                    mekle[k] = "Removed";
-                    $("#mekle" + k).fadeOut("slow");
-                    bool = false;
-                    break;
-                }
-            }
-        }
-        if (bool) {
-            console.log("IS BOLLLLLLLL")
-            addNode(i, j, id, BotCards, cardId, "top");
         }
     }
-    BotTurn = false;
+    botEatedCards = botEatedCards.filter(item => !Number.isNaN(item));
+
+    if (bool) {
+        addBotNode(botcard_i, j, botcard_id, BotCards, cardId, "top");
+    }
     PlayerTurn = true;
     restart();
+}
+function botPlay() {
+    var botCardIndex = decideBotMove();
+    var botCardId = "card" + (botCardIndex + 1);
+    BotAttack(botCardIndex, botCardId);
+}
+
+function decideBotMove() {
+    // Simple strategy: play the first available card
+    for (var i = 0; i < BotCards.length; i++) {
+        if (BotCards[i] !== "Removed") {
+            return i;
+        }
+    }
+    return 0; // Default case, should not usually happen
 }
 
 
@@ -308,31 +304,42 @@ function PlayerAttack(i, id) {
     if (PlayerTurn) {
         bool = true;
         var cardId = "card_" + (i + 1);
-        for (var j = 0; j < mekle.length; j++) {
-            if (PlayerCards[i] == mekle[j]) {
+        for (var j = 0; j < Table.length; j++) {
+            if (PlayerCards[i] == Table[j]) {
+                var x = Number(PlayerCards[i]);
+                var y = Number(Table[j]);
+                playerEatedCards.push(x, y);
                 var cardId = "card_" + (i + 1);
                 display(i, j, PlayerCards, cardId);
                 break;
             }
-            for (var k = j + 1; k < mekle.length; k++) {
-                if (Number(mekle[j]) + Number(mekle[k]) == PlayerCards[i]) {
+            for (var k = j + 1; k < Table.length; k++) {
+                var x1 = Number(PlayerCards[i]);
+                var y1 = Number(Table[j]);
+                var z1 = Number(Table[k])
+                if (Number(Table[j]) + Number(Table[k]) == PlayerCards[i]) {
+                    playerEatedCards.push(x1, y1, z1);
                     $("#card_" + (i + 1)).fadeOut("slow");
                     PlayerCards[i] = "Removed";
-                    mekle[j] = "Removed";
+                    Table[j] = "Removed";
                     $("#mekle" + j).fadeOut("slow");
-                    mekle[k] = "Removed";
+                    Table[k] = "Removed";
                     $("#mekle" + k).fadeOut("slow");
+                    //Bool means he can't eat
                     bool = false;
                     break;
                 }
             }
         }
+        playerEatedCards = playerEatedCards.filter(item => !Number.isNaN(item));
+        console.log("Filtred array", playerEatedCards)
         if (bool) {
             addNode(i, j, id, PlayerCards, cardId, "bottom");
         }
     }
-    BotTurn = true;
     PlayerTurn = false;
+    //Settimeout function to wait 1s "1000ms" before the bot turn
+    setTimeout(botPlay, 1000);
     restart();
 }
 // choose a random file
