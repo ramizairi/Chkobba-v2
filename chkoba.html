@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chkobba</title>
+  <!--Script lel mekla-->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
+    </script>
+  <!---->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  
+  <!--Bot Cards-->
+  <div class="w3-row bot">
+    <div class="w3-center" id="player1">
+      <img id="card1" onclick="BotAttack(0,'card1')" class="w3-animate-left bothands">
+      <img id="card2" onclick="BotAttack(1,'card2')" class="w3-animate-left bothands">
+      <img id="card3" onclick="BotAttack(2,'card3')" class="w3-animate-left bothands">
+    </div>
+
+  </div>
+
+
+
+  <!--Table Cards-->
+  <div class="w3-row table">
+    <div class="w3-center" id="mekle">
+      <img id="mekle0" class="w3-animate-left tablecards">
+      <img id="mekle1" class="w3-animate-left tablecards">
+      <img id="mekle2" class="w3-animate-left tablecards">
+      <img id="mekle3" class="w3-animate-left tablecards">
+    </div>
+  </div>
+
+
+    <!--Player Cards-->
+  <div class="w3-row player">
+    <div class="w3-center" id="player2">
+      <img id="card_1" onclick="PlayerAttack(0,'card_1')" class="w3-animate-left playerhands">
+      <img id="card_2" onclick="PlayerAttack(1,'card_2')" class="w3-animate-left playerhands">
+      <img id="card_3" onclick="PlayerAttack(2,'card_3')" class="w3-animate-left playerhands">
+    </div>
+  </div>
+
+
+  <div id="id01" class="w3-modal">
+    <div class="w3-modal-content w3-red">
+      <div class="w3-container">
+        <span onclick="document.getElementById('id01').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+        <p>Game over</p>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

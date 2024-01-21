@@ -1,0 +1,47 @@
+
+/*Player*/
+.player {
+    position: absolute; 
+    bottom: 50px; 
+    left: 40%;
+    cursor: pointer;
+}
+.playerhands {
+    width: 120px;
+    margin-left: 10px;
+}
+
+.playerhands:hover {
+    transform: scale(1.2);
+    transition: 0.2s ease;
+}
+
+/*Bot*/
+.bot {
+    position: absolute; 
+    left: 40%;
+    top: 5px;
+}
+.bothands {
+    width: 120px;  
+    margin-left: 10px;
+}
+
+/*Table*/
+.table {
+    position: absolute;
+    top: 35%;
+    left: 35%;
+    width: 600px;
+    display: flex; /* Use flexbox to organize children */
+    flex-wrap: wrap; /* Wrap items to the next line */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+}
+
+.tablecards {
+    width: 110px;
+    margin: 5px; /* Add some space between cards */
+    margin-left: 20px;
+    flex: 0 0 50%; /* Set the basis to 50% to have 2 columns */
+}
