@@ -8,15 +8,32 @@
   <!--Script lel mekla-->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
-    </script>
+    debugger</script>
   <!---->
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  
-  
+
+  <!--Infos-->
+  <div class="infos">
+    <h2>Target Value : <span id="targetvalue">11</span></h2>
+    <h2>Round Number : <span id="roundnumber">1</span></h2>
+    <h2>Jaria Number : <span id="jarianumber">1</span></h2>
+  </div>
+
+  <!--Start PopUp-->
+  <div id="popup-window" class="popup">
+    <div class="popup-content">
+      <h2>Welcome💕</h2>
+      <p>Chose the target value</p>
+      <label><input id="radio1" type="radio" name="option" value="11" onclick="setOption(11)" checked> 11</label><br>
+      <label><input id="radio2" type="radio" name="option" value="21" onclick="setOption(21)"> 21</label><br>
+      <button id="start-game-btn" onclick="startGame()">Start ▶️</button>
+    </div>
+  </div>
+
   <!--Bot Cards-->
   <div class="w3-row bot">
     <div class="w3-center" id="player1">
@@ -24,7 +41,6 @@
       <img id="card2" onclick="BotAttack(1,'card2')" class="w3-animate-left bothands">
       <img id="card3" onclick="BotAttack(2,'card3')" class="w3-animate-left bothands">
     </div>
-
   </div>
 
 
@@ -39,7 +55,7 @@
   </div>
 
 
-    <!--Player Cards-->
+  <!--Player Cards-->
   <div class="w3-row player">
     <div class="w3-center" id="player2">
       <img id="card_1" onclick="PlayerAttack(0,'card_1')" class="w3-animate-left playerhands">
@@ -47,7 +63,7 @@
       <img id="card_3" onclick="PlayerAttack(2,'card_3')" class="w3-animate-left playerhands">
     </div>
   </div>
-
+  <div></div>
 
   <div id="id01" class="w3-modal">
     <div class="w3-modal-content w3-red">
@@ -55,7 +71,6 @@
         <span onclick="document.getElementById('id01').style.display='none'"
           class="w3-button w3-display-topright">&times;</span>
         <p>Game over</p>
-
       </div>
     </div>
   </div>
