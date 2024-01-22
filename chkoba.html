@@ -8,7 +8,7 @@
   <!--Script lel mekla-->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
-    debugger</script>
+      debugger</script>
   <!---->
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="style.css">
@@ -65,6 +65,34 @@
   </div>
   <div></div>
 
+
+
+
+  <div id="popup-score" class="s-popup">
+    <span class="close-btn" onclick="closePopup()">&times;</span>
+
+    <div class="s-popup-content">
+      <div class="score-display">
+        <h4>Round Number <span id="torh" class="score-item">0</span> </h4>
+        <!-- Player Scores -->
+        <h4>PLAYER : El Haya<span id="p-haya" class="score-item player-haya">0 <span>El Haya</span></span></h4>
+        <h4>PLAYER : El Bermila<span id="p-bermila" class="score-item player-bermila">0</span></h4>
+        <h4>PLAYER : El Carta<span id="p-carta" class="score-item player-carta">0</span></h4>
+        <h4>PLAYER : El Dineri<span id="p-dineri" class="score-item player-dineri">0</span></h4>
+        <h4>PLAYER : El Chkeyb<span id="p-chkeyb" class="score-item player-chkeyb">0</span></h4>
+        <h4>PLAYER---\> Score Total<span id="playerscore" class="score-item player-total">0</span></h4>
+        <!-- Bot Scores -->
+        <h4>BOT : El Haya<span id="b-haya" class="score-item bot-haya">0</span></h4>
+        <h4>BOT : El Bermila<span id="b-bermila" class="score-item bot-bermila">0</span></h4>
+        <h4>BOT : El Carta<span id="b-carta" class="score-item bot-carta">0</span></h4>
+        <h4>BOT : El Dineri<span id="b-dineri" class="score-item bot-dineri">0</span></h4>
+        <h4>BOT : El Chkeyb<span id="b-chkeyb" class="score-item bot-chkeyb">0</span></h4>
+        <h4>BOT---\> Score Total<span id="botscore" class="score-item bot-total">0</span></h4>
+      </div>
+    </div>
+  </div>
+
+  <!------------------------------------------->
   <div id="id01" class="w3-modal">
     <div class="w3-modal-content w3-red">
       <div class="w3-container">

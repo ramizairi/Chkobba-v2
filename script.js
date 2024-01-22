@@ -1,4 +1,5 @@
 
+
 var targetScore = 11;
 var selectedTableCardValue = null; // Store the value of the selected table card
 
@@ -22,7 +23,6 @@ var spades = ['01_of_spad.svg', '02_of_spad.svg', '03_of_spad.svg', '04_of_spad.
 var clubs = ['01_of_club.svg', '02_of_club.svg', '03_of_club.svg', '04_of_club.svg', '05_of_club.svg',
     '06_of_club.svg', '07_of_club.svg', 'Ja_of_club.svg', 'Ki_of_club.svg', 'Qu_of_club.svg'];
 
-console.log("Total Cards is ", cards.length)
 
 // a --> jack 
 
@@ -43,14 +43,14 @@ function startGame() {
     // Get the value of the selected radio button
     var selectedValue = document.querySelector('input[name="option"]:checked').value;
     targetScore = parseInt(selectedValue, 10);
-    console.log(targetScore)
+    //console.log(targetScore)
     document.getElementById("popup-window").style.display = "none";
     document.getElementById("start-game-btn").addEventListener("click", startGame);
 
 }
 function setOption(value) {
     // Your code to handle the option
-    console.log("Option selected:", value);
+    //console.log("Option selected:", value);
     document.getElementById("targetvalue").textContent = value;
 
 }
@@ -95,6 +95,7 @@ var bdineri = 0;
 
 function init() {
     CalculateScore();
+    /*
     if (AllCard <= 0) {
 
         alert("Testtttt");
@@ -102,27 +103,30 @@ function init() {
         AllCard = 40;
         return;
         //window.close();
-    }
+    }*/
 
 
     //Bot Cards
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     botCardValues[0] = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
-    console.log("botCardValues[0]", botCardValues[0])
+    //console.log("botCardValues[0]", botCardValues[0])
     img1.src = "back.svg";
+    AllCard--;
 
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     botCardValues[1] = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
-    console.log("botCardValues[1]", botCardValues[1])
+    //console.log("botCardValues[1]", botCardValues[1])
     img2.src = "back.svg";
+    AllCard--;
 
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     botCardValues[2] = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
-    console.log("botCardValues[2]", botCardValues[2])
+    //console.log("botCardValues[2]", botCardValues[2])
     img3.src = "back.svg";
+    AllCard--;
 
     //Player Cards
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
@@ -146,7 +150,6 @@ function init() {
 // Table Cards
 
 function Table() {
-
     randomNumberCard = Math.ceil(Math.random() * cards.length) - 1;
     randomNumber = Math.ceil(Math.random() * carreaux.length) - 1;
     mekle1.src = cards[randomNumberCard] + choseCard(randomNumberCard)[randomNumber];
@@ -198,12 +201,12 @@ function CalculateScore() {
     }
     if (bdineri > 5) botscore = botscore + 1;
     else if (bdineri < 5) playerscore = playerscore + 1;
-/*
-    if (playerscore > targetScore) {
-        alert("Vous avez gagnez !");
-    } else if (botscore > targetScore) {
-        alert("Vous avez perdu !");
-    } */
+    /*
+        if (playerscore > targetScore) {
+            alert("Vous avez gagnez !");
+        } else if (botscore > targetScore) {
+            alert("Vous avez perdu !");
+        } */
 }
 
 // gives new cards to players
@@ -220,22 +223,13 @@ function restart() {
             }
 
             updatePlayerHands();
-            
+
             document.getElementById("jarianumber").textContent = jaria;
             jaria = jaria + 1;
         }
     } else {
-        jaria = 0;
-        document.getElementById("jarianumber").textContent = jaria;
-        alert("Round over !")
-        document.getElementById("roundnumber").textContent = round;
-        round = round + 1;
-        playerEatedCards = [];
-        botEatedCards = [];
-        bermila = 0;
-        pbermila = 0;
-        bhaya = 0
-        bdineri = 0;
+        updateScores();
+        showScorePopup();
     }
 }
 
@@ -261,13 +255,13 @@ console.log("clubs -> " + clubs);*/
 // add the random card to players and mekle arrays
 
 BotCards = [botCardValues[0][botCardValues[0].length - 13], botCardValues[1][botCardValues[1].length - 13], botCardValues[2][botCardValues[2].length - 13]];
-console.log("Bot Cards -> " + BotCards);
+//console.log("Bot Cards -> " + BotCards);
 
 PlayerCards = [img5.src[img5.src.length - 13], img6.src[img6.src.length - 13], img7.src[img7.src.length - 13]];
-console.log("Player Cards -> " + PlayerCards);
+//console.log("Player Cards -> " + PlayerCards);
 
 Table = [mekle1.src[mekle1.src.length - 13], mekle2.src[mekle2.src.length - 13], mekle3.src[mekle3.src.length - 13], mekle4.src[mekle4.src.length - 13]];
-console.log("Table Cards -> " + Table);
+//console.log("Table Cards -> " + Table);
 
 
 function search(playerCards) {
@@ -350,9 +344,6 @@ function BotAttack(botcard_i, botcard_id) {
             }
             for (var k = j + 1; k < Table.length; k++) {
                 if (Number(Table[j]) + Number(Table[k]) == BotCards[botcard_i]) {
-                    var x1 = Number(BotCards[botcard_i]);
-                    var y1 = Number(Table[j]);
-                    var z1 = Number(Table[k]);
                     /*
                     botEatedCards.push(x1, y1, z1); */
                     botEatedCards.push(botCardValues[botcard_i]); // Full source of bot's card
@@ -465,7 +456,7 @@ function selectTableCard(event) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Attach the event listener to the parent container of the table cards
     var mekleContainer = document.getElementById('mekle');
     if (mekleContainer) {
@@ -508,4 +499,101 @@ function choseCard(r) {
     }
     return chose;
 
+}
+
+
+function cleargamecards() {
+    // Clear the Table array
+    Table = [];
+    BotCards = [];
+    PlayerCards = [];
+    // Remove all card elements from the UI
+    var tableCardElements = document.querySelectorAll('.tablecards');
+    tableCardElements.forEach(cardElement => {
+        cardElement.remove();
+    });
+
+    // Remove all card elements from the player's hand in the UI
+    var playerCardElements = document.querySelectorAll('#player2 .playerhands');
+    playerCardElements.forEach(cardElement => {
+        cardElement.remove();
+    });
+
+    // Remove all card elements from the bot's hand in the UI
+    var botCardElements = document.querySelectorAll('#player1 .bothands');
+    botCardElements.forEach(cardElement => {
+        cardElement.remove();
+    });
+}
+/*
+function saveState() {
+    // Example of saving state
+    localStorage.setItem('playerScore', JSON.stringify(playerscore));
+    localStorage.setItem('botScore', JSON.stringify(botscore));
+    // ... save other variables as needed
+}
+function restoreState() {
+    if (localStorage.getItem('playerScore')) {
+        playerscore = JSON.parse(localStorage.getItem('playerScore'));
+    }
+    if (localStorage.getItem('botScore')) {
+        botscore = JSON.parse(localStorage.getItem('botScore'));
+    }
+    // ... restore other variables as needed
+}
+
+window.onload = function() {
+    restoreState();
+    // ... any other initialization code
+};
+*/
+function startnextround() {
+    cleargamecards();
+    saveState();
+    location.reload();
+}
+
+//------------------------------
+
+function closePopup() {
+    startnextround();
+    jaria = 1;
+    document.getElementById("jarianumber").textContent = jaria;
+    document.getElementById("roundnumber").textContent = round;
+    round = round + 1;
+    playerEatedCards = [];
+    botEatedCards = [];
+    bermila = 0;
+    pbermila = 0;
+    bhaya = 0
+    bdineri = 0;
+    document.getElementById("popup-score").style.display = "none";
+}
+
+function updateScores() {
+
+    // Update Round
+    document.getElementById("torh").textContent = round;
+
+    // Update player scores
+    document.getElementById("p-haya").textContent = 1 - bhaya;
+    document.getElementById("p-bermila").textContent = pbermila;
+    document.getElementById("p-carta").textContent = playerEatedCards.length;
+    document.getElementById("p-dineri").textContent = 10 - bdineri;
+    //document.getElementById("p-chkeyb").textContent = chkeyb;
+
+    // Update bot scores
+    document.getElementById("b-haya").textContent = bhaya;
+    document.getElementById("b-bermila").textContent = 1 - pbermila;
+    document.getElementById("b-carta").textContent = botEatedCards.length;
+    document.getElementById("b-dineri").textContent = bdineri;
+    //document.getElementById("b-chkeyb").textContent = chkeyb;
+
+    // Update totals
+    document.getElementById("playerscore").textContent = playerscore;
+    document.getElementById("botscore").textContent = botscore;
+}
+
+function showScorePopup() {
+    document.getElementById("popup-score").style.display = "block";
 }
