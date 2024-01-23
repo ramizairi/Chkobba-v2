@@ -4,10 +4,10 @@ var targetScore = 11;
 var selectedTableCardValue = null; // Store the value of the selected table card
 
 
-const carreauxSrc = "Carr\\";
-const heartSrc = "Coeu\\";
-const spadesSrc = "Piqu\\";
-const clubsSrc = "Tref\\";
+const carreauxSrc = "diam\\";
+const heartSrc = "hear\\";
+const spadesSrc = "spad\\";
+const clubsSrc = "club\\";
 
 const cards = [carreauxSrc, heartSrc, spadesSrc, clubsSrc];
 
@@ -200,19 +200,27 @@ function CalculateScore() {
     }
     if (bdineri > 5) botscore = botscore + 1;
     else if (bdineri < 5) playerscore = playerscore + 1;
-    /*
-        if (playerscore > targetScore) {
-            alert("Vous avez gagnez !");
-        } else if (botscore > targetScore) {
-            alert("Vous avez perdu !");
-        } */
+    if (playerscore > targetScore) {
+        updateScores();
+        alert("Vous avez gagnez !");
+    } else if (botscore > targetScore) {
+        updateScores();
+        alert("Vous avez perdu !");
+    }
 }
 
 // gives new cards to players
 var jaria = 2;
 var round = 2;
 function restart() {
-    if (AllCard !== 0) {
+    if (AllCard === 0) {
+
+        updateScores();
+        alert("Round over")
+        AllCard = 40;
+
+    } else {
+
         if (isHandEmpty(BotCards) && isHandEmpty(PlayerCards)) {
             init(); // Redistribute cards if both hands are empty
 
@@ -226,12 +234,6 @@ function restart() {
             document.getElementById("jarianumber").textContent = jaria;
             jaria = jaria + 1;
         }
-    } else {
-        /*
-        updateScores();
-        showScorePopup(); */
-        alert("Round over")
-        AllCard = 40;
     }
 }
 
@@ -527,34 +529,6 @@ function cleargamecards() {
         cardElement.remove();
     });
 }
-/*
-function saveState() {
-    // Example of saving state
-    localStorage.setItem('playerScore', JSON.stringify(playerscore));
-    localStorage.setItem('botScore', JSON.stringify(botscore));
-    // ... save other variables as needed
-}
-function restoreState() {
-    if (localStorage.getItem('playerScore')) {
-        playerscore = JSON.parse(localStorage.getItem('playerScore'));
-    }
-    if (localStorage.getItem('botScore')) {
-        botscore = JSON.parse(localStorage.getItem('botScore'));
-    }
-    // ... restore other variables as needed
-}
-
-window.onload = function() {
-    restoreState();
-    // ... any other initialization code
-};
-*/
-/*
-function startnextround() {
-    cleargamecards();
-}
-*/
-//------------------------------
 
 function closePopup() {
     jaria = 1;
@@ -571,9 +545,6 @@ function closePopup() {
 }
 
 function updateScores() {
-
-    // Update Round
-    document.getElementById("torh").textContent = round;
 
     // Update player scores
     document.getElementById("p-haya").textContent = 1 - bhaya;
@@ -593,7 +564,91 @@ function updateScores() {
     document.getElementById("playerscore").textContent = playerscore;
     document.getElementById("botscore").textContent = botscore;
 }
-
+/*
 function showScorePopup() {
     document.getElementById("popup-score").style.display = "block";
+}*/
+
+
+// My new logic impliment-------------------------
+function initializeDeck() {
+    // Define the suits and the cards in each suit
+    const suits = ['diam', 'hear', 'spad', 'club'];
+    const cards = ['01', '02', '03', '04', '05', '06', '07', 'Ja', 'Ki', 'Qu'];
+
+    // Create an array to hold the deck
+    let deck = [];
+
+    // Populate the deck with each combination of suit and card
+    suits.forEach(suit => {
+        cards.forEach(card => {
+            deck.push(suit + "\\" + card + "_of_" + suit.slice(0, 4) + ".svg");
+        });
+    });
+
+    // Shuffle the deck
+    for (let i = deck.length - 1; i > 0; i--) {
+        // Pick a random index before the current one
+        let j = Math.floor(Math.random() * (i + 1));
+        // Swap it with the current element
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+
+    return deck;
 }
+
+// Example of using the function
+let deck = initializeDeck();
+console.log(deck);
+
+function dealCard(deck) {
+    return deck.pop();
+}
+
+
+// deal hands
+function dealHands(deck) {
+    let player1Cards = [];
+    let player2Cards = [];
+
+    // Deal 3 cards to each player
+    for (let i = 0; i < 3; i++) {
+        player1Cards.push(dealCard(deck));
+        player2Cards.push(dealCard(deck));
+    }
+
+    // Deal 4 cards to the table
+
+
+    return { player1Cards, player2Cards };
+}
+function dealTable(deck) {
+    let tableCards = [];
+
+    for (let i = 0; i < 4; i++) {
+        tableCards.push(dealCard(deck));
+    }
+    return tableCards;
+}
+// tranform values
+function getCardValue(cardName) {
+    // Extract the number or face value from the card name
+    let value = cardName.match(/(\d+|Ja|Qu|Ki)/)[0];
+
+    switch(value) {
+        case 'Ja': return 9; // Jack
+        case 'Qu': return 8; // Queen
+        case 'Ki': return 10; // King
+        default: return parseInt(value); // Numeric value
+    }
+}
+
+let { player1Cards, player2Cards } = dealHands(deck);
+let tableCards = dealTable(deck);
+
+console.log("Player 1 Cards:", player1Cards);
+console.log("Player 2 Cards:", player2Cards);
+console.log("Table Cards:", tableCards);
+
+// Example of getting card value
+console.log("Value of card:", getCardValue(player1Cards[0]));
