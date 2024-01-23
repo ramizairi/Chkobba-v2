@@ -95,7 +95,6 @@ var bdineri = 0;
 
 function init() {
     CalculateScore();
-    /*
     if (AllCard <= 0) {
 
         alert("Testtttt");
@@ -103,7 +102,7 @@ function init() {
         AllCard = 40;
         return;
         //window.close();
-    }*/
+    }
 
 
     //Bot Cards
@@ -213,7 +212,7 @@ function CalculateScore() {
 var jaria = 2;
 var round = 2;
 function restart() {
-    if (jaria < 5) {
+    if (AllCard !== 0) {
         if (isHandEmpty(BotCards) && isHandEmpty(PlayerCards)) {
             init(); // Redistribute cards if both hands are empty
 
@@ -228,8 +227,11 @@ function restart() {
             jaria = jaria + 1;
         }
     } else {
+        /*
         updateScores();
-        showScorePopup();
+        showScorePopup(); */
+        alert("Round over")
+        AllCard = 40;
     }
 }
 
@@ -547,16 +549,14 @@ window.onload = function() {
     // ... any other initialization code
 };
 */
+/*
 function startnextround() {
     cleargamecards();
-    saveState();
-    location.reload();
 }
-
+*/
 //------------------------------
 
 function closePopup() {
-    startnextround();
     jaria = 1;
     document.getElementById("jarianumber").textContent = jaria;
     document.getElementById("roundnumber").textContent = round;
