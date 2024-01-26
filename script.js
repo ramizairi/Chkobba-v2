@@ -64,9 +64,6 @@ function showPopup() {
 
 // Player & Bot HANDS init
 function init() {
-    CalculateScore();
-
-
     // Deal cards to players
     let { player1Cards, player2Cards } = dealHands(deck);
     BotCards = player1Cards;
@@ -108,8 +105,27 @@ InitTable();
 function CalculateScore() {
     //clear the bot hand "delete the 'Removed' word"
     botEatedCards = botEatedCards.filter(item => item !== 'Removed');
+    TableCards = TableCards.filter(item => item !== 'Removed');
 
+    console.log("Bot eated cards : ", botEatedCards)
+    console.log("Player eated cards : ", playerEatedCards)
     // Carta
+    if(playerlasteat) {
+        for (var j = 0; j < TableCards.length; j++) {
+            search(TableCards);
+            playerEatedCards.push(TableCards[j]);
+            TableCards[j] = "Removed";
+        }
+        console.log("Player last eat cards = ", playerEatedCards);
+    } else {
+        for (var j = 0; j < TableCards.length; j++) {
+            search(TableCards);
+            botEatedCards.push(TableCards[j]);
+            TableCards[j] = "Removed";
+        }
+        console.log("Bot last eat cards = ", botEatedCards);
+    }
+    TableCards = [];
     if (deck.length === 0) {
         if (playerEatedCards.length > botEatedCards.length) playerscore = playerscore + 1;
         else botscore = botscore + 1;
@@ -131,58 +147,36 @@ function CalculateScore() {
         else playerscore = playerscore + 1;
 
         //Dineri
+        /*
         for (i = 0; i < botEatedCards.length; i++) {
             if (botEatedCards[i].includes('Carr')) bdineri = bdineri + 1;
-        }
+        }*/
         if (bdineri > 5) botscore = botscore + 1;
         else if (bdineri < 5) playerscore = playerscore + 1;
-        if (playerscore > targetScore) {
-            updateScores();
-            alert("Vous avez gagnez !");
-        } else if (botscore > targetScore) {
-            updateScores();
-            alert("Vous avez perdu !");
-        }
     }
 }
 
+
 // gives new cards to players
-var jaria = 2;
+var jaria = 1;
 var round = 2;
+
 function restart() {
+    if (isHandEmpty(BotCards) && isHandEmpty(PlayerCards)) {
 
-    if (AllCard === 0) {
-        if (confirm("Round over, check score")) {
-            updateScores();
-            deck = [];
-            AllCard = 40;
-            BotCards, PlayerCards, TableCards;
-            botEatedCards = [];
-            playerEatedCards = [];
-            PlayerTurn = true;
-            bermila = 0;
-            pbermila = 0;
-            bhaya = 0
-            bdineri = 0;
-            deck = initializeDeck();
+        jaria = jaria + 1;
+        document.getElementById("jarianumber").textContent = jaria;
+
+        init(); // Redistribute cards if both hands are empty
+
+        for (var i = 0; i < 3; i++) {
+            // Init cards animation "fade in"
+            $("#card" + (i + 1)).fadeIn();
+            $("#card_" + (i + 1)).fadeIn();
         }
 
-    } else {
+        updatePlayerHands();
 
-        if (isHandEmpty(BotCards) && isHandEmpty(PlayerCards)) {
-            init(); // Redistribute cards if both hands are empty
-
-            for (var i = 0; i < 3; i++) {
-                // Init cards animation "fade in"
-                $("#card" + (i + 1)).fadeIn();
-                $("#card_" + (i + 1)).fadeIn();
-            }
-
-            updatePlayerHands();
-
-            document.getElementById("jarianumber").textContent = jaria;
-            jaria = jaria + 1;
-        }
     }
 }
 
@@ -288,11 +282,12 @@ function BotAttack(botcard_i) {
                 display(botcard_i, j, BotCards, cardId);
                 bool = false;
                 canEat = true;
-                break; // Exit the loop if a match is found
+                playerlasteat = false;
+                break;
             }
 
             var k = j + 1;
-            while (k < TableCards.length) {
+            while (k < TableCards.length || canEat === true) {
                 if (getCardValue(TableCards[j]) + getCardValue(TableCards[k]) === botCardValue) {
                     botEatedCards.push(BotCards[botcard_i]);
                     botEatedCards.push(TableCards[j]);
@@ -302,7 +297,8 @@ function BotAttack(botcard_i) {
                     display(botcard_i, k, BotCards, "card" + (botcard_i + 1));
                     canEat = true;
                     bool = false;
-                    break; // Exit the loop if a match is found
+                    playerlasteat = false;
+                    break;
                 }
                 k++;
             }
@@ -312,27 +308,21 @@ function BotAttack(botcard_i) {
             }
             j++;
         }
-
         console.log("Bot Total Eated Cards : ", botEatedCards)
         if (bool) {
             addBotNode(botcard_i, j, BotCards, cardId, "top");
         }
     }
+
+    checkRoundEnd();
     //remove highlight if exist selected cards
     var selectedCards = document.querySelectorAll('.tablecards.selected-card');
     selectedCards.forEach(card => card.classList.remove('selected-card'));
     PlayerTurn = true;
-    restart();
 }
 
 function botPlay() {
     var botCardIndex = decideBotMove();
-    console.log("TableCards before BotAttack: ", TableCards);
-    if (TableCards.some(card => card === null)) {
-        console.error("Error: Found null in TableCards", TableCards);
-        // Handle the error: maybe reinitialize the TableCards or fix the source of the nulls
-    }
-
     BotAttack(botCardIndex);
 }
 
@@ -347,29 +337,30 @@ function decideBotMove() {
 }
 
 function PlayerAttack(i, id) {
+    var caneat = false;
     if (PlayerTurn) {
         var playerCardValue = getCardValue(PlayerCards[i]); // Convert the player card value to a number
+        console.log("Player card value ", playerCardValue)
         if (playerCardValue === sumselectedcards) {
             // The player's card matches the sum of selected table cards
-            playerEatedCards.push(PlayerCards[i]); // Add the player card to the eated cards
+            playerEatedCards.push(PlayerCards[i]); // Add the player card source to the eated cards
 
             // Process each selected table card
             var selectedCards = document.querySelectorAll('.tablecards.selected-card');
             selectedCards.forEach(card => {
                 var cardIndex = card.id.replace('mekle', '');
-                playerEatedCards.push(TableCards[cardIndex]);
+                playerEatedCards.push(TableCards[cardIndex]); // Add the table card source to the eated cards
                 // Use display function to remove card
                 display(i, cardIndex, PlayerCards, id);
-
+                caneat = true;
+                playerlasteat = true
             });
             console.log("Player eated cards ", playerEatedCards)
         } else {
             // Player card does not match the sum
             // Drop the player's card on the table
             addNode(i, TableCards.length, id, PlayerCards, "card_" + (i + 1), "bottom");
-
         }
-
         // Clear all current selections
         var selectedCards = document.querySelectorAll('.tablecards.selected-card');
         selectedCards.forEach(card => card.classList.remove('selected-card'));
@@ -377,8 +368,8 @@ function PlayerAttack(i, id) {
         PlayerTurn = false;
         // Logic for bot's turn...
         setTimeout(botPlay, 1000);
-        restart();
     }
+    checkRoundEnd();
 }
 
 
@@ -438,67 +429,6 @@ function removeSelectedTableCard() {
     }
 }
 
-// choose a random file
-
-function choseCard(r) {
-    var chose;
-    switch (r) {
-        case 0:
-            chose = carreaux;
-            break;
-        case 1:
-            chose = hearts;
-            break;
-        case 2:
-            chose = spades;
-            break;
-        case 3:
-            chose = clubs;
-            break;
-    }
-    return chose;
-
-}
-
-
-function cleargamecards() {
-    // Clear the Table array
-    TableCards = [];
-    BotCards = [];
-    PlayerCards = [];
-    // Remove all card elements from the UI
-    var tableCardElements = document.querySelectorAll('.tablecards');
-    tableCardElements.forEach(cardElement => {
-        cardElement.remove();
-    });
-
-    // Remove all card elements from the player's hand in the UI
-    var playerCardElements = document.querySelectorAll('#player2 .playerhands');
-    playerCardElements.forEach(cardElement => {
-        cardElement.remove();
-    });
-
-    // Remove all card elements from the bot's hand in the UI
-    var botCardElements = document.querySelectorAll('#player1 .bothands');
-    botCardElements.forEach(cardElement => {
-        cardElement.remove();
-    });
-}
-
-function closePopup() {
-    jaria = 1;
-    document.getElementById("jarianumber").textContent = jaria;
-    document.getElementById("roundnumber").textContent = round;
-    round = round + 1;
-    playerEatedCards = [];
-    botEatedCards = [];
-    bermila = 0;
-    pbermila = 0;
-    bhaya = 0
-    bdineri = 0;
-    document.getElementById("popup-score").style.display = "none";
-}
-
 function updateScores() {
 
     // Update player scores
@@ -552,7 +482,59 @@ function dealCard(deck) {
     return deck.pop();
 }
 
+function checkRoundEnd() {
+    console.log("Deck : ", deck);
 
+    if (deck.length <= 6) {
+        deck.pop();
+        console.log("Deck in the last jaria : ", deck);
+    }
+    if (deck.length === 0) {
+        setTimeout(CalculateScore, 1000);
+        setTimeout(confirmandupdate, 1200);
+
+    } else {
+        restart();
+    }
+}
+function confirmandupdate() {
+    if (confirm("Round over, check score")) {
+        updateScores();
+        document.getElementById("roundnumber").textContent = round;
+        deck = [];
+        AllCard = 40;
+        BotCards = [];
+        PlayerCards = [];
+        TableCards = [];
+        botEatedCards = [];
+        playerEatedCards = [];
+        PlayerTurn = true;
+        bermila = 0;
+        pbermila = 0;
+        bhaya = 0;
+        bdineri = 0;
+        startNewRound();
+    }
+}
+function startNewRound() {
+    if (playerscore >= targetScore || botscore >= targetScore) {
+        // Game over, one of the scores has reached the target
+        endGame();
+        alert("GAME OVER")
+    } else {
+        // Prepare for the next round
+        round++;
+        // Reinitialize the deck
+        deck = initializeDeck();
+        // Reset other necessary variables, such as player hands and table cards
+        BotCards = [];
+        PlayerCards = [];
+        TableCards = [];
+        // Start the new round
+        init();
+        InitTable();
+    }
+}
 // deal hands
 function dealHands(deck) {
     let player1Cards = [];
