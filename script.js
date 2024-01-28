@@ -1,7 +1,6 @@
 var targetScore = 11;
 var selectedTableCardValue = null; // Store the value of the selected table card
 var deck = [];
-var AllCard = 40;
 var BotCards, PlayerCards, TableCards;
 var botEatedCards = [];
 var playerEatedCards = [];
@@ -10,9 +9,11 @@ var playerscore = 0;
 var botscore = 0;
 var bermila = 0;
 var pbermila = 0;
-var bhaya = 0
-var bdineri = 0;
+var phaya = 0
+var pdineri = 0;
 var playerlasteat = true;
+var pchkeyb = 0;
+var bchkeyb = 0;
 
 var img1 = document.querySelector("#card1");
 var img2 = document.querySelector("#card2");
@@ -77,9 +78,6 @@ function init() {
     img5.src = PlayerCards[0];
     img6.src = PlayerCards[1];
     img7.src = PlayerCards[2];
-
-    // Update remaining card count
-    AllCard = deck.length;
 }
 
 // Table Cards
@@ -92,8 +90,6 @@ function InitTable() {
     mekle2.src = TableCards[1];
     mekle3.src = TableCards[2];
     mekle4.src = TableCards[3];
-
-    AllCard = deck.length; // Update remaining card count
 }
 
 
@@ -104,41 +100,41 @@ InitTable();
 
 function CalculateScore() {
     //clear the bot hand "delete the 'Removed' word"
-    botEatedCards = botEatedCards.filter(item => item !== 'Removed');
-    TableCards = TableCards.filter(item => item !== 'Removed');
 
     console.log("Bot eated cards : ", botEatedCards)
     console.log("Player eated cards : ", playerEatedCards)
     // Carta
-    if(playerlasteat) {
+    if (playerlasteat) {
         for (var j = 0; j < TableCards.length; j++) {
-            debugger
             search(TableCards);
             playerEatedCards.push(TableCards[j]);
             TableCards[j] = "Removed";
             $("#mekle" + j).fadeOut("slow");
             search(TableCards);
         }
-        console.log("Player last eat cards = ", playerEatedCards);
     } else {
         for (var j = 0; j < TableCards.length; j++) {
-            debugger
             search(TableCards);
             botEatedCards.push(TableCards[j]);
             TableCards[j] = "Removed";
             $("#mekle" + j).fadeOut("slow");
             search(TableCards);
         }
-        console.log("Bot last eat cards = ", botEatedCards);
     }
-    TableCards = [];
+
+    botEatedCards = botEatedCards.filter(item => item !== 'Removed');
+    playerEatedCards = playerEatedCards.filter(item => item !== 'Removed');
+    console.log("Player last eat cards = ", playerEatedCards);
+    console.log("Bot last eat cards = ", botEatedCards);
+
     if (deck.length === 0) {
+        //Carta
         if (playerEatedCards.length > botEatedCards.length) playerscore = playerscore + 1;
         else botscore = botscore + 1;
 
         //Bermila
         for (i = 0; i < playerEatedCards.length; i++) {
-            if (playerEatedCards[i] === 7 || playerEatedCards[i] === 6) bermila = bermila + 1;
+            if (getCardValue(playerEatedCards[i]) === 7 || getCardValue(playerEatedCards[i]) === 6) bermila = bermila + 1;
         }
         if (bermila > 4) {
             playerscore = playerscore + 1;
@@ -146,19 +142,18 @@ function CalculateScore() {
         } else if (bermila < 4) botscore = botscore + 1;
 
         //El haya
-        for (i = 0; i < botEatedCards.length; i++) {
-            if (botEatedCards[i] === 'Carr\\07_of_diam.svg') bhaya = 1;
+        for (i = 0; i < playerEatedCards.length; i++) {
+            if (playerEatedCards[i] === 'Carr\\07_of_diam.svg') phaya = 1;
         }
-        if (bhaya = 1) botscore = botscore + 1;
-        else playerscore = playerscore + 1;
+        if (phaya === 1) playerscore = playerscore + 1;
+        else botscore = botscore + 1;
 
         //Dineri
-        /*
-        for (i = 0; i < botEatedCards.length; i++) {
-            if (botEatedCards[i].includes('Carr')) bdineri = bdineri + 1;
-        }*/
-        if (bdineri > 5) botscore = botscore + 1;
-        else if (bdineri < 5) playerscore = playerscore + 1;
+        for (i = 0; i < playerEatedCards.length; i++) {
+            if (playerEatedCards[i].includes('Carr')) pdineri = pdineri + 1;
+        }
+        if (pdineri > 5) playerscore = playerscore + 1;
+        else if (pdineri < 5) botscore = botscore + 1;
     }
 }
 
@@ -185,7 +180,30 @@ function restart() {
 
     }
 }
+function initnextround() {
+    jaria = 1;
+    document.getElementById("jarianumber").textContent = jaria;
+    init(); // Redistribute cards if both hands are empty
 
+    for (var i = 0; i < 3; i++) {
+        // Init cards animation "fade in"
+        $("#card" + (i + 1)).fadeIn();
+        $("#card_" + (i + 1)).fadeIn();
+    }
+
+    updatePlayerHands();
+    TableCards = [];
+    TableCards = dealTable(deck);
+    mekle1.src = TableCards[0];
+    mekle2.src = TableCards[1];
+    mekle3.src = TableCards[2];
+    mekle4.src = TableCards[3];
+    // Make sure the elements are visible
+    $("#mekle0, #mekle1, #mekle2, #mekle3").fadeIn();
+
+    console.log("Table Cards Are : ", mekle1.src, mekle2.src, mekle3.src, mekle4.src);
+
+}
 function isHandEmpty(hand) {
     return hand.every(card => card === "Removed" || card === undefined);
 }
@@ -289,6 +307,10 @@ function BotAttack(botcard_i) {
                 bool = false;
                 canEat = true;
                 playerlasteat = false;
+                if (TableCards.length === 0) {
+                    bchkeyb = bchkeyb + 1;
+                    console.log("Player Chakkeb, total chkeyb : ", bchkeyb)
+                } 
                 break;
             }
 
@@ -298,12 +320,15 @@ function BotAttack(botcard_i) {
                     botEatedCards.push(BotCards[botcard_i]);
                     botEatedCards.push(TableCards[j]);
                     botEatedCards.push(TableCards[k]);
-
                     display(botcard_i, j, BotCards, "card" + (botcard_i + 1));
                     display(botcard_i, k, BotCards, "card" + (botcard_i + 1));
                     canEat = true;
                     bool = false;
                     playerlasteat = false;
+                    if (TableCards.length === 0) {
+                        bchkeyb = bchkeyb + 1;
+                        console.log("Player Chakkeb, total chkeyb : ", bchkeyb)
+                    }
                     break;
                 }
                 k++;
@@ -343,7 +368,6 @@ function decideBotMove() {
 }
 
 function PlayerAttack(i, id) {
-    var caneat = false;
     if (PlayerTurn) {
         var playerCardValue = getCardValue(PlayerCards[i]); // Convert the player card value to a number
         console.log("Player card value ", playerCardValue)
@@ -358,9 +382,14 @@ function PlayerAttack(i, id) {
                 playerEatedCards.push(TableCards[cardIndex]); // Add the table card source to the eated cards
                 // Use display function to remove card
                 display(i, cardIndex, PlayerCards, id);
-                caneat = true;
                 playerlasteat = true
+
+
             });
+            if (TableCards.length === 0) {
+                pchkeyb = pchkeyb + 1;
+                console.log("Player Chakkeb, total chkeyb : ", pchkeyb)
+            }
             console.log("Player eated cards ", playerEatedCards)
         } else {
             // Player card does not match the sum
@@ -438,18 +467,18 @@ function removeSelectedTableCard() {
 function updateScores() {
 
     // Update player scores
-    document.getElementById("p-haya").textContent = 1 - bhaya;
+    document.getElementById("p-haya").textContent = phaya;
     document.getElementById("p-bermila").textContent = pbermila;
     document.getElementById("p-carta").textContent = playerEatedCards.length;
-    document.getElementById("p-dineri").textContent = 10 - bdineri;
-    //document.getElementById("p-chkeyb").textContent = chkeyb;
+    document.getElementById("p-dineri").textContent = 10 - pdineri;
+    document.getElementById("p-chkeyb").textContent = pchkeyb;
 
     // Update bot scores
-    document.getElementById("b-haya").textContent = bhaya;
+    document.getElementById("b-haya").textContent = 1 - phaya;
     document.getElementById("b-bermila").textContent = 1 - pbermila;
-    document.getElementById("b-carta").textContent = botEatedCards.length;
-    document.getElementById("b-dineri").textContent = bdineri;
-    //document.getElementById("b-chkeyb").textContent = chkeyb;
+    document.getElementById("b-carta").textContent = 40 - playerEatedCards.length;
+    document.getElementById("b-dineri").textContent = 10 - pdineri;
+    document.getElementById("b-chkeyb").textContent = bchkeyb;
 
     // Update totals
     document.getElementById("playerscore").textContent = playerscore;
@@ -458,92 +487,94 @@ function updateScores() {
 
 // My new logic impliment-------------------------
 function initializeDeck() {
-    // Define the suits and the cards in each suit
     const suits = ['diam', 'hear', 'spad', 'club'];
     const cards = ['01', '02', '03', '04', '05', '06', '07', 'Ja', 'Ki', 'Qu'];
 
-    // Create an array to hold the deck
     let deck = [];
-
-    // Populate the deck with each combination of suit and card
     suits.forEach(suit => {
         cards.forEach(card => {
-            deck.push(suit + "\\" + card + "_of_" + suit.slice(0, 4) + ".svg");
+            // Use template literals for clarity and proper escaping
+            deck.push(`${suit}/${card}_of_${suit}.svg`);
         });
     });
 
     // Shuffle the deck
-    for (let i = deck.length - 1; i > 0; i--) {
-        // Pick a random index before the current one
-        let j = Math.floor(Math.random() * (i + 1));
-        // Swap it with the current element
-        [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
-
+    shuffleDeck(deck);
     return deck;
 }
-
+function shuffleDeck(deck) {
+    for (let i = deck.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+}
 function dealCard(deck) {
     //pop removes the last element from an array and returns that element. "exist method in js"
     return deck.pop();
 }
 
 function checkRoundEnd() {
-    console.log("Deck : ", deck);
+    //console.log("Deck : ", deck);
 
     if (deck.length <= 6) {
         deck.pop();
         console.log("Deck in the last jaria : ", deck);
     }
     if (deck.length === 0) {
-        setTimeout(CalculateScore, 1000);
-        setTimeout(confirmandupdate, 1200);
+        CalculateScore();
+        confirmandupdate();
 
     } else {
         restart();
     }
 }
 function confirmandupdate() {
-    if (confirm("Round over, check score")) {
-        updateScores();
-        document.getElementById("roundnumber").textContent = round;
-        deck = [];
-        AllCard = 40;
-        BotCards = [];
-        PlayerCards = [];
-        TableCards = [];
-        botEatedCards = [];
-        playerEatedCards = [];
-        PlayerTurn = true;
-        bermila = 0;
-        pbermila = 0;
-        bhaya = 0;
-        bdineri = 0;
-        startNewRound();
-    }
+    updateScores();
+    document.getElementById("roundnumber").textContent = round;
+
+    // Resetting for a new game round
+    deck = initializeDeck(); // Reinitialize the deck for a new round
+    BotCards = [];
+    PlayerCards = [];
+    TableCards = [];
+    botEatedCards = [];
+    playerEatedCards = [];
+    PlayerTurn = true; // Assuming the player always starts
+    bermila = 0;
+    pbermila = 0;
+    bhaya = 0;
+    bdineri = 0;
+
+    startNewRound();
 }
+
 function startNewRound() {
     if (playerscore >= targetScore || botscore >= targetScore) {
         // Game over, one of the scores has reached the target
         endGame();
-        alert("GAME OVER")
+        alert("GAME OVER");
     } else {
+        alert("Round over, check score")
         // Prepare for the next round
-        
-        
         round++;
-        // Reinitialize the deck
-        deck = initializeDeck();
-        console.log("New deck is : ", deck)
-        // Reset other necessary variables, such as player hands and table cards
+        document.getElementById("roundnumber").textContent = round;
+
+        // Clear out the old hands and table cards
         BotCards = [];
         PlayerCards = [];
         TableCards = [];
+
         // Start the new round
-        init();
-        InitTable();
+        setTimeout(initnextround, 1000);
     }
 }
+
+function endGame() {
+    // Implement game over logic
+    console.log("Game Over. Final Scores - Player: ", playerscore, " Bot: ", botscore);
+    // Possibly show a game over screen or message
+}
+
 // deal hands
 function dealHands(deck) {
     let player1Cards = [];
