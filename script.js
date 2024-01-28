@@ -257,7 +257,6 @@ function display(i, j, playerCards, cardId) {
     search(TableCards);
 }
 
-
 // Put the card on the table : For the bot
 function addBotNode(i, j, playerCards, cardId, direction) {
     TableCards.push(playerCards[i]);
@@ -298,7 +297,7 @@ function BotAttack(botcard_i) {
         var canEat = false;
         var cardId = "card" + (botcard_i + 1);
         var j = 0;
-
+        console.log("Table cards : ", TableCards)
         while (j < TableCards.length || canEat === true) {
             if (botCardValue == getCardValue(TableCards[j])) {
                 botEatedCards.push(BotCards[botcard_i]);
