@@ -112,16 +112,22 @@ function CalculateScore() {
     // Carta
     if(playerlasteat) {
         for (var j = 0; j < TableCards.length; j++) {
+            debugger
             search(TableCards);
             playerEatedCards.push(TableCards[j]);
             TableCards[j] = "Removed";
+            $("#mekle" + j).fadeOut("slow");
+            search(TableCards);
         }
         console.log("Player last eat cards = ", playerEatedCards);
     } else {
         for (var j = 0; j < TableCards.length; j++) {
+            debugger
             search(TableCards);
             botEatedCards.push(TableCards[j]);
             TableCards[j] = "Removed";
+            $("#mekle" + j).fadeOut("slow");
+            search(TableCards);
         }
         console.log("Bot last eat cards = ", botEatedCards);
     }
@@ -523,9 +529,12 @@ function startNewRound() {
         alert("GAME OVER")
     } else {
         // Prepare for the next round
+        
+        
         round++;
         // Reinitialize the deck
         deck = initializeDeck();
+        console.log("New deck is : ", deck)
         // Reset other necessary variables, such as player hands and table cards
         BotCards = [];
         PlayerCards = [];
