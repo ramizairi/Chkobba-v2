@@ -9,11 +9,12 @@ var playerscore = 0;
 var botscore = 0;
 var bermila = 0;
 var pbermila = 0;
-var phaya = 0
-var pdineri = 0;
+var phaya = 0;
+var pdineri = 2;
 var playerlasteat = true;
 var pchkeyb = 0;
 var bchkeyb = 0;
+var isBot = false;
 
 var img1 = document.querySelector("#card1");
 var img2 = document.querySelector("#card2");
@@ -41,6 +42,8 @@ function openPopup() {
 }
 function startGame() {
     // Get the value of the selected radio button
+    var playerName = document.getElementById("name").value;
+    document.getElementById("playername").textContent = playerName + " Score : ";
     var selectedValue = document.querySelector('input[name="option"]:checked').value;
     targetScore = parseInt(selectedValue, 10);
     //console.log(targetScore)
@@ -101,8 +104,8 @@ InitTable();
 function CalculateScore() {
     //clear the bot hand "delete the 'Removed' word"
 
-    console.log("Bot eated cards : ", botEatedCards)
-    console.log("Player eated cards : ", playerEatedCards)
+    //console.log("Bot eated cards : ", botEatedCards)
+    //console.log("Player eated cards : ", playerEatedCards)
     // Carta
     if (playerlasteat) {
         for (var j = 0; j < TableCards.length; j++) {
@@ -124,8 +127,8 @@ function CalculateScore() {
 
     botEatedCards = botEatedCards.filter(item => item !== 'Removed');
     playerEatedCards = playerEatedCards.filter(item => item !== 'Removed');
-    console.log("Player last eat cards = ", playerEatedCards);
-    console.log("Bot last eat cards = ", botEatedCards);
+    //console.log("Player last eat cards = ", playerEatedCards);
+    //console.log("Bot last eat cards = ", botEatedCards);
 
     if (deck.length === 0) {
         //Carta
@@ -143,14 +146,19 @@ function CalculateScore() {
 
         //El haya
         for (i = 0; i < playerEatedCards.length; i++) {
-            if (playerEatedCards[i] === 'Carr\\07_of_diam.svg') phaya = 1;
+            if (playerEatedCards[i] === 'diam/07_of_diam.svg') {
+                phaya = 1;
+                console.log(playerEatedCards[i])
+            }
         }
         if (phaya === 1) playerscore = playerscore + 1;
         else botscore = botscore + 1;
 
         //Dineri
-        for (i = 0; i < playerEatedCards.length; i++) {
-            if (playerEatedCards[i].includes('Carr')) pdineri = pdineri + 1;
+        for (var i = 0; i < playerEatedCards.length; i++) {
+            if (typeof playerEatedCards[i] === 'string' && playerEatedCards[i].includes('diam/')) {
+                pdineri += 1;
+            }
         }
         if (pdineri > 5) playerscore = playerscore + 1;
         else if (pdineri < 5) botscore = botscore + 1;
@@ -160,7 +168,7 @@ function CalculateScore() {
 
 // gives new cards to players
 var jaria = 1;
-var round = 2;
+var round = 1;
 
 function restart() {
     if (isHandEmpty(BotCards) && isHandEmpty(PlayerCards)) {
@@ -201,7 +209,7 @@ function initnextround() {
     // Make sure the elements are visible
     $("#mekle0, #mekle1, #mekle2, #mekle3").fadeIn();
 
-    console.log("Table Cards Are : ", mekle1.src, mekle2.src, mekle3.src, mekle4.src);
+    //console.log("Table Cards Are : ", mekle1.src, mekle2.src, mekle3.src, mekle4.src);
 
 }
 function isHandEmpty(hand) {
@@ -297,19 +305,34 @@ function BotAttack(botcard_i) {
         var canEat = false;
         var cardId = "card" + (botcard_i + 1);
         var j = 0;
-        console.log("Table cards : ", TableCards)
+        //console.log("Table cards : ", TableCards)
         while (j < TableCards.length || canEat === true) {
             if (botCardValue == getCardValue(TableCards[j])) {
                 botEatedCards.push(BotCards[botcard_i]);
                 botEatedCards.push(TableCards[j]);
+                isBot = true
                 display(botcard_i, j, BotCards, cardId);
                 bool = false;
                 canEat = true;
                 playerlasteat = false;
-                if (TableCards.length === 0) {
-                    bchkeyb = bchkeyb + 1;
-                    console.log("Player Chakkeb, total chkeyb : ", bchkeyb)
-                } 
+                var isChakkeb = true;
+
+                // Iterate over TableCards to check if any card is not 'Removed'
+                for (var i = 0; i < TableCards.length; i++) {
+                    if (TableCards[i] !== 'Removed') {
+                        // If any card is found that is not 'Removed', set isChakkeb to false and break the loop
+                        isChakkeb = false;
+                        break;
+                    }
+                }
+            
+                // If isChakkeb is true after checking all cards, it means the table is empty
+                if (isChakkeb) {
+                    // Increment the player's 'chakkeb' count and score
+                    bchkeyb += 1;
+                    botscore += 1;
+                    //console.log("Table is empty. Player Chakkeb, total chkeyb: ", pchkeyb);
+                }
                 break;
             }
 
@@ -319,14 +342,29 @@ function BotAttack(botcard_i) {
                     botEatedCards.push(BotCards[botcard_i]);
                     botEatedCards.push(TableCards[j]);
                     botEatedCards.push(TableCards[k]);
+                    isBot = true
                     display(botcard_i, j, BotCards, "card" + (botcard_i + 1));
                     display(botcard_i, k, BotCards, "card" + (botcard_i + 1));
                     canEat = true;
                     bool = false;
                     playerlasteat = false;
-                    if (TableCards.length === 0) {
-                        bchkeyb = bchkeyb + 1;
-                        console.log("Player Chakkeb, total chkeyb : ", bchkeyb)
+                    var isChakkeb = true;
+
+                    // Iterate over TableCards to check if any card is not 'Removed'
+                    for (var i = 0; i < TableCards.length; i++) {
+                        if (TableCards[i] !== 'Removed') {
+                            // If any card is found that is not 'Removed', set isChakkeb to false and break the loop
+                            isChakkeb = false;
+                            break;
+                        }
+                    }
+                
+                    // If isChakkeb is true after checking all cards, it means the table is empty
+                    if (isChakkeb) {
+                        // Increment the player's 'chakkeb' count and score
+                        bchkeyb += 1;
+                        botscore += 1;
+                        //console.log("Table is empty. Player Chakkeb, total chkeyb: ", pchkeyb);
                     }
                     break;
                 }
@@ -338,7 +376,7 @@ function BotAttack(botcard_i) {
             }
             j++;
         }
-        console.log("Bot Total Eated Cards : ", botEatedCards)
+        //console.log("Bot Total Eated Cards : ", botEatedCards)
         if (bool) {
             addBotNode(botcard_i, j, BotCards, cardId, "top");
         }
@@ -369,7 +407,7 @@ function decideBotMove() {
 function PlayerAttack(i, id) {
     if (PlayerTurn) {
         var playerCardValue = getCardValue(PlayerCards[i]); // Convert the player card value to a number
-        console.log("Player card value ", playerCardValue)
+        //console.log("Player card value ", playerCardValue)
         if (playerCardValue === sumselectedcards) {
             // The player's card matches the sum of selected table cards
             playerEatedCards.push(PlayerCards[i]); // Add the player card source to the eated cards
@@ -380,14 +418,28 @@ function PlayerAttack(i, id) {
                 var cardIndex = card.id.replace('mekle', '');
                 playerEatedCards.push(TableCards[cardIndex]); // Add the table card source to the eated cards
                 // Use display function to remove card
+                isBot = false
                 display(i, cardIndex, PlayerCards, id);
                 playerlasteat = true
 
 
             });
-            if (TableCards.length === 0) {
-                pchkeyb = pchkeyb + 1;
-                console.log("Player Chakkeb, total chkeyb : ", pchkeyb)
+            var isChakkeb = true;
+
+            // Iterate over TableCards to check if any card is not 'Removed'
+            for (var i = 0; i < TableCards.length; i++) {
+                if (TableCards[i] !== 'Removed') {
+                    // If any card is found that is not 'Removed', set isChakkeb to false and break the loop
+                    isChakkeb = false;
+                    break;
+                }
+            }
+            // If isChakkeb is true after checking all cards, it means the table is empty
+            if (isChakkeb) {
+                // Increment the player's 'chakkeb' count and score
+                pchkeyb += 1;
+                playerscore += 1;
+                console.log("Table is empty. Player Chakkeb, total chkeyb: ", pchkeyb);
             }
             console.log("Player eated cards ", playerEatedCards)
         } else {
@@ -405,6 +457,7 @@ function PlayerAttack(i, id) {
     }
     checkRoundEnd();
 }
+
 
 
 var sumselectedcards = 0;
@@ -469,7 +522,7 @@ function updateScores() {
     document.getElementById("p-haya").textContent = phaya;
     document.getElementById("p-bermila").textContent = pbermila;
     document.getElementById("p-carta").textContent = playerEatedCards.length;
-    document.getElementById("p-dineri").textContent = 10 - pdineri;
+    document.getElementById("p-dineri").textContent = pdineri;
     document.getElementById("p-chkeyb").textContent = pchkeyb;
 
     // Update bot scores
